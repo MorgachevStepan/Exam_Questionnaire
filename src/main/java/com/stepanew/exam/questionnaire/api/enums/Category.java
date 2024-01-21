@@ -1,4 +1,4 @@
-package com.stepanew.exam.questionnaire.store;
+package com.stepanew.exam.questionnaire.api.enums;
 
 public enum Category {
     MATH,

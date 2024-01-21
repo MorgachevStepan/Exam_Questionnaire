@@ -1,4 +1,4 @@
-package com.stepanew.exam.questionnaire.store;
+package com.stepanew.exam.questionnaire.store.entities;
 
 import jakarta.persistence.*;
 import lombok.*;

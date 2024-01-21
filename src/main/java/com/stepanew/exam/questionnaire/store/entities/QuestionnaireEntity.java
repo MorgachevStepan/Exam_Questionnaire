@@ -1,5 +1,6 @@
-package com.stepanew.exam.questionnaire.store;
+package com.stepanew.exam.questionnaire.store.entities;
 
+import com.stepanew.exam.questionnaire.api.enums.Category;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
