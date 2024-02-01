@@ -24,7 +24,7 @@ public class QuestionEntity {
     @Column(name = "answer")
     String answer;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "questionnaire_id")
     private QuestionnaireEntity questionnaire;
 }

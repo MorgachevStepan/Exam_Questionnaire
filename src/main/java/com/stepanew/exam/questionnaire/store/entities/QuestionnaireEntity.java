@@ -6,7 +6,6 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -16,12 +15,15 @@ import java.util.List;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
-@Table(name = "questionnaire_entity")
+@Table(name = "questionnaire")
 public class QuestionnaireEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "questionnaire_entity_id")
+    @Column(name = "questionnaire_id")
     Long id;
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
+    @JoinColumn(name = "user_id")
+    UserEntity creatorId;
 
     @Column(name = "description")
     String description;
@@ -33,6 +35,9 @@ public class QuestionnaireEntity {
     @Builder.Default
     Instant createdAt = Instant.now();
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "questionnaire")
-    List<QuestionEntity> questions = new ArrayList<>();
+    @OneToMany(mappedBy = "questionnaire",
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH},
+            fetch = FetchType.LAZY,
+            orphanRemoval = true)
+    List<QuestionEntity> questions;
 }

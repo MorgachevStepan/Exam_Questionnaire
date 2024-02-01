@@ -7,9 +7,6 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Data
 @Builder
@@ -29,22 +26,12 @@ public class QuestionnaireDto {
     @JsonProperty("created_at")
     Instant createdAt = Instant.now();
 
-    @NonNull
-    List<QuestionDto> questions = new ArrayList<>();
-
     public static QuestionnaireDto MapFromEntity(QuestionnaireEntity questionnaireEntity){
         return QuestionnaireDto.builder()
                 .id(questionnaireEntity.getId())
                 .description(questionnaireEntity.getDescription())
                 .category(questionnaireEntity.getCategory())
                 .createdAt(questionnaireEntity.getCreatedAt())
-                .questions(
-                        questionnaireEntity
-                                .getQuestions()
-                                .stream()
-                                .map(QuestionDto::mapFromEntity)
-                                .collect(Collectors.toList())
-                )
                 .build();
     }
 }
