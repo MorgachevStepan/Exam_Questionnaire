@@ -20,18 +20,11 @@ public class UserDto {
     Long id;
     @NonNull
     String username;
-    @NonNull
-    String password;
-    @NonNull
-    @JsonProperty("password_confirmation")
-    String passwordConfirmation;
 
     public static UserDto mapFromEntity(UserEntity user){
         return UserDto.builder()
                 .id(user.getId())
                 .username(user.getUsername())
-                .password(user.getPassword())
-                .passwordConfirmation(user.getPasswordConfirmation())
                 .build();
     }
 

@@ -1,3 +1,4 @@
+/*
 package com.stepanew.exam.questionnaire.security;
 
 import com.stepanew.exam.questionnaire.exception.ResourceNotFoundException;
@@ -35,3 +36,4 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     }
 
 }
+*/

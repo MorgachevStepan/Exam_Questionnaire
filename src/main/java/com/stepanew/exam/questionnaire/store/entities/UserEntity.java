@@ -25,8 +25,6 @@ public class UserEntity {
     String username;
     @Column(name = "password")
     String password;
-    @Column(name = "password_confirmation")
-    String passwordConfirmation;
     @ManyToMany
     @JoinTable(joinColumns = @JoinColumn(name = "user_id"))
     Set<RoleEntity> roles;

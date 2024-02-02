@@ -1,3 +1,4 @@
+/*
 package com.stepanew.exam.questionnaire.security;
 
 import lombok.AccessLevel;
@@ -41,3 +42,4 @@ public class JwtEntity implements UserDetails {
         return true;
     }
 }
+*/
