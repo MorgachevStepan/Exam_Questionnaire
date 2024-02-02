@@ -1,8 +1,11 @@
 package com.stepanew.exam.questionnaire.security;
 
+import com.stepanew.exam.questionnaire.api.DTOs.auth.JwtResponse;
 import com.stepanew.exam.questionnaire.api.services.JwtProperties;
 import com.stepanew.exam.questionnaire.api.services.UserService;
+import com.stepanew.exam.questionnaire.exception.AccessDeniedException;
 import com.stepanew.exam.questionnaire.store.entities.RoleEntity;
+import com.stepanew.exam.questionnaire.store.entities.UserEntity;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
@@ -29,7 +32,6 @@ import java.util.stream.Collectors;
 public class JwtTokenProvider {
 
     final JwtProperties jwtProperties;
-
     final UserDetailsService userDetailsService;
     final UserService userService;
     private Key key;
@@ -96,4 +98,30 @@ public class JwtTokenProvider {
                 .getBody()
                 .getSubject();
     }
+
+    public JwtResponse refreshUserTokens(String refreshToken){
+        JwtResponse jwtResponse = new JwtResponse();
+        if(!validateToken(refreshToken)){
+            throw new AccessDeniedException();
+        }
+        Long userId = Long.valueOf(getId(refreshToken));
+        UserEntity user = userService.getById(userId);
+        jwtResponse.setId(user.getId());
+        jwtResponse.setUsername(user.getUsername());
+        jwtResponse.setAccessToken(createAccessToken(userId, user.getUsername(), user.getRoles()));
+        jwtResponse.setRefreshToken(createRefreshToken(userId, user.getUsername()));
+        return jwtResponse;
+    }
+
+    private String getId(String token){
+        return Jwts
+                .parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .get("id")
+                .toString();
+    }
+
 }
