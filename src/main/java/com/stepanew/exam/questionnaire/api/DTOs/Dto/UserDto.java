@@ -1,11 +1,6 @@
-package com.stepanew.exam.questionnaire.api.DTOs;
+package com.stepanew.exam.questionnaire.api.DTOs.Dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.stepanew.exam.questionnaire.store.entities.UserEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 

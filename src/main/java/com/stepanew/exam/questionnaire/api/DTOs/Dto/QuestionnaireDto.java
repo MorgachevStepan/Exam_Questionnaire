@@ -1,4 +1,4 @@
-package com.stepanew.exam.questionnaire.api.DTOs;
+package com.stepanew.exam.questionnaire.api.DTOs.Dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.stepanew.exam.questionnaire.store.entities.QuestionnaireEntity;

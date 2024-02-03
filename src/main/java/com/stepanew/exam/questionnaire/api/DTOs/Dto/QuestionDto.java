@@ -1,4 +1,4 @@
-package com.stepanew.exam.questionnaire.api.DTOs;
+package com.stepanew.exam.questionnaire.api.DTOs.Dto;
 
 import com.stepanew.exam.questionnaire.store.entities.QuestionEntity;
 import lombok.*;

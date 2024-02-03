@@ -1,5 +1,6 @@
 package com.stepanew.exam.questionnaire.api.services.impl;
 
+import com.stepanew.exam.questionnaire.api.DTOs.Dto.UserDto;
 import com.stepanew.exam.questionnaire.api.services.UserService;
 import com.stepanew.exam.questionnaire.exception.ResourceNotFoundException;
 import com.stepanew.exam.questionnaire.store.entities.UserEntity;
@@ -18,11 +19,11 @@ public class UserServiceImpl implements UserService {
     //final PasswordEncoder passwordEncoder;
 
     @Override
-    public UserEntity getById(Long id) {
+    public UserDto getById(Long id) {
         UserEntity user = userRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException("User with this id not found")
+                () -> new ResourceNotFoundException(String.format("User with id = %d not found", id))
         );
-        return user;
+        return UserDto.mapFromEntity(user);
     }
 
     @Override
