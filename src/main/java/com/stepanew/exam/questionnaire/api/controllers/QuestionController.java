@@ -7,6 +7,8 @@ import com.stepanew.exam.questionnaire.api.services.QuestionService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -32,9 +34,12 @@ public class QuestionController {
     }
 
     @GetMapping("/")
-    public ResponseEntity<List<QuestionDto>> getByAllByQuestionnaireId(@RequestParam Long questionnaireId) {
-        List<QuestionDto> response = questionService
-                .getAllByQuestionnaireId(questionnaireId);
+    public ResponseEntity<Page<QuestionDto>> getByAllByQuestionnaireId(
+            @RequestParam Long questionnaireId,
+            @RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
+            @RequestParam(name = "offset", required = false, defaultValue = "20") Integer offset) {
+        Page<QuestionDto> response = questionService
+                .getAllByQuestionnaireId(questionnaireId, PageRequest.of(page, offset));
 
         if (response.isEmpty()) {
             return ResponseEntity

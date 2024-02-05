@@ -1,15 +1,26 @@
 package com.stepanew.exam.questionnaire.api.services;
 
-import com.stepanew.exam.questionnaire.store.entities.QuestionEntity;
-import com.stepanew.exam.questionnaire.store.entities.QuestionnaireEntity;
+import com.stepanew.exam.questionnaire.api.DTOs.Dto.QuestionnaireDto;
+import com.stepanew.exam.questionnaire.api.DTOs.Request.QuestionnaireCreateRequestDto;
+import com.stepanew.exam.questionnaire.api.DTOs.Request.QuestionnaireUpdateRequestDto;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 public interface QuestionnaireService {
 
-    QuestionnaireEntity getById(Long id);
-    List<QuestionnaireEntity> getAllByUserId(Long id);
-    QuestionnaireEntity create(QuestionnaireEntity questionnaire, Long userId);
-    QuestionnaireEntity update(QuestionnaireEntity questionnaire);
+    @Transactional(readOnly = true)
+    QuestionnaireDto getById(Long id);
+
+    @Transactional(readOnly = true)
+    List<QuestionnaireDto> getAllByUserId(Long id);
+
+    @Transactional
+    QuestionnaireDto create(QuestionnaireCreateRequestDto requestDto);
+
+    @Transactional
+    QuestionnaireDto update(QuestionnaireUpdateRequestDto requestDto);
+
+    @Transactional
     void delete(Long id);
 }

@@ -12,6 +12,8 @@ import com.stepanew.exam.questionnaire.store.repositories.QuestionnaireRepositor
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -37,13 +39,17 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public List<QuestionDto> getAllByQuestionnaireId(Long questionnaireId) {
-        List<QuestionDto> response = questionRepository
-                .findAllByQuestionnaireId(questionnaireId)
-                .stream()
-                .map(QuestionDto::mapFromEntity)
-                .toList();
-        return response;
+    public Page<QuestionDto> getAllByQuestionnaireId(Long questionnaireId, Pageable pageable) {
+        Page<QuestionEntity> response = questionRepository
+                .findAllByQuestionnaireId(questionnaireId, pageable);
+
+        if(response.isEmpty()){
+            throw new ResourceNotFoundException(
+                    String.format("Nothing was found on page number %d", pageable.getPageNumber())
+            );
+        }
+
+        return response.map(QuestionDto::mapFromEntity);
     }
 
     @Override

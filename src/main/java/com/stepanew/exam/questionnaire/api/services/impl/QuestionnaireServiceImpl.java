@@ -1,5 +1,8 @@
 package com.stepanew.exam.questionnaire.api.services.impl;
 
+import com.stepanew.exam.questionnaire.api.DTOs.Dto.QuestionnaireDto;
+import com.stepanew.exam.questionnaire.api.DTOs.Request.QuestionnaireCreateRequestDto;
+import com.stepanew.exam.questionnaire.api.DTOs.Request.QuestionnaireUpdateRequestDto;
 import com.stepanew.exam.questionnaire.api.services.QuestionnaireService;
 import com.stepanew.exam.questionnaire.store.entities.QuestionnaireEntity;
 import org.springframework.stereotype.Service;
@@ -8,23 +11,24 @@ import java.util.List;
 
 @Service
 public class QuestionnaireServiceImpl implements QuestionnaireService {
+
     @Override
-    public QuestionnaireEntity getById(Long id) {
+    public QuestionnaireDto getById(Long id) {
         return null;
     }
 
     @Override
-    public List<QuestionnaireEntity> getAllByUserId(Long id) {
+    public List<QuestionnaireDto> getAllByUserId(Long id) {
         return null;
     }
 
     @Override
-    public QuestionnaireEntity create(QuestionnaireEntity questionnaire, Long userId) {
+    public QuestionnaireDto create(QuestionnaireCreateRequestDto requestDto) {
         return null;
     }
 
     @Override
-    public QuestionnaireEntity update(QuestionnaireEntity questionnaire) {
+    public QuestionnaireDto update(QuestionnaireUpdateRequestDto requestDto) {
         return null;
     }
 
@@ -32,4 +36,5 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
     public void delete(Long id) {
 
     }
+
 }
