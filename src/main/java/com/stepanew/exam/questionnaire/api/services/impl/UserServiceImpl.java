@@ -20,9 +20,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto getById(Long id) {
-        UserEntity user = userRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException(String.format("User with id = %d not found", id))
-        );
+        UserEntity user = userRepository
+                .findById(id)
+                .orElseThrow(
+                        () -> new ResourceNotFoundException(
+                                String.format("User with id = %d not found", id)
+                        )
+                );
         return UserDto.mapFromEntity(user);
     }
 

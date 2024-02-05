@@ -1,6 +1,7 @@
 package com.stepanew.exam.questionnaire.api.DTOs.Dto;
 
 import com.stepanew.exam.questionnaire.store.entities.QuestionEntity;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -10,10 +11,10 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class QuestionDto {
-    @NonNull
+    @NotNull
     Long id;
 
-    @NonNull
+    @NotNull
     String task;
 
     @NonNull
