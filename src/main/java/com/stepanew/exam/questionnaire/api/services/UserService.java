@@ -1,6 +1,7 @@
 package com.stepanew.exam.questionnaire.api.services;
 
 import com.stepanew.exam.questionnaire.api.DTOs.Dto.UserDto;
+import com.stepanew.exam.questionnaire.api.DTOs.Request.UserRegisterRequestDto;
 import com.stepanew.exam.questionnaire.store.entities.UserEntity;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,7 +17,7 @@ public interface UserService {
     UserEntity update(UserEntity user);
 
     @Transactional
-    UserEntity create(UserEntity user);
+    UserDto create(UserRegisterRequestDto user);
 
     @Transactional(readOnly = true)
     boolean isQuestionnaireOwner(Long userId, Long questionnaireId);

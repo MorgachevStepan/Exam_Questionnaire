@@ -1,10 +1,10 @@
 package com.stepanew.exam.questionnaire.api.controllers;
 
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.stepanew.exam.questionnaire.exception.ExceptionBody;
 import com.stepanew.exam.questionnaire.exception.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -43,6 +43,24 @@ public class ControllerAdvice {
         errors.put(e.getPath().get(0).getFieldName(), "Invalid value for this field");
         exceptionBody.setErrors(errors);
         return exceptionBody;
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ExceptionBody handleAuthentication(AuthenticationException e){
+        return new ExceptionBody("Authentication failed");
+    }
+
+    @ExceptionHandler(IllegalStateException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ExceptionBody handleIllegalState(IllegalStateException e){
+        return new ExceptionBody(e.getMessage());
+    }
+
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ExceptionBody handleException(ExceptionBody e){
+        return new ExceptionBody("Internal error");
     }
 
 }
