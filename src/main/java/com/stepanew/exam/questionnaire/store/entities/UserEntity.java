@@ -25,7 +25,7 @@ public class UserEntity {
     String username;
     @Column(name = "password")
     String password;
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(joinColumns = @JoinColumn(name = "user_id"))
     Set<RoleEntity> roles;
     @OneToMany(mappedBy = "creatorId",

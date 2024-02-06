@@ -1,4 +1,3 @@
-/*
 package com.stepanew.exam.questionnaire.config;
 
 import com.stepanew.exam.questionnaire.security.JwtTokenFilter;
@@ -76,4 +75,3 @@ public class ApplicationConfig {
     }
 
 }
-*/

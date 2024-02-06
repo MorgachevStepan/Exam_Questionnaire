@@ -1,4 +1,3 @@
-/*
 package com.stepanew.exam.questionnaire.security;
 
 import com.stepanew.exam.questionnaire.store.entities.RoleEntity;
@@ -29,4 +28,3 @@ public class JwtEntityFactory {
     }
 
 }
-*/

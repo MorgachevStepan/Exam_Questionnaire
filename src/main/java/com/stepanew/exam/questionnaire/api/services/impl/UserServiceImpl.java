@@ -8,6 +8,7 @@ import com.stepanew.exam.questionnaire.store.repositories.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -16,10 +17,10 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl implements UserService {
 
     final UserRepository userRepository;
-    //final PasswordEncoder passwordEncoder;
+    final PasswordEncoder passwordEncoder;
 
     @Override
-    public UserDto getById(Long id) {
+    public UserEntity getById(Long id) {
         UserEntity user = userRepository
                 .findById(id)
                 .orElseThrow(
@@ -27,12 +28,19 @@ public class UserServiceImpl implements UserService {
                                 String.format("User with id = %d not found", id)
                         )
                 );
-        return UserDto.mapFromEntity(user);
+        return user;
     }
 
     @Override
     public UserEntity getByUsername(String username) {
-        return null;
+        UserEntity user = userRepository
+                .findByUsername(username)
+                .orElseThrow(
+                        () -> new ResourceNotFoundException(
+                                String.format("User with username = %s not found", username)
+                        )
+                );
+        return user;
     }
 
     @Override

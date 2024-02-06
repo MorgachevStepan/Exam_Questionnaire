@@ -1,4 +1,3 @@
-/*
 package com.stepanew.exam.questionnaire.store.entities;
 
 import com.stepanew.exam.questionnaire.api.services.UserService;
@@ -20,5 +19,5 @@ public class JwtUserDetailsService implements UserDetailsService {
         UserEntity user = userService.getByUsername(username);
         return JwtEntityFactory.create(user);
     }
+
 }
-*/

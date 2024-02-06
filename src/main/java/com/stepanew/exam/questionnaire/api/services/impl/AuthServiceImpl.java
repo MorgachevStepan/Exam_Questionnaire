@@ -1,4 +1,3 @@
-/*
 package com.stepanew.exam.questionnaire.api.services.impl;
 
 import com.stepanew.exam.questionnaire.api.DTOs.auth.JwtRequest;
@@ -40,4 +39,3 @@ public class AuthServiceImpl implements AuthService {
         return jwtTokenProvider.refreshUserTokens(refreshToken);
     }
 }
-*/

@@ -1,4 +1,3 @@
-/*
 package com.stepanew.exam.questionnaire.api.controllers;
 
 
@@ -24,4 +23,3 @@ public class AuthController {
     }
 
 }
-*/

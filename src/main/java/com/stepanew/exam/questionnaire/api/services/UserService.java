@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 public interface UserService {
 
     @Transactional(readOnly = true)
-    UserDto getById(Long id);
+    UserEntity getById(Long id);
 
     @Transactional(readOnly = true)
     UserEntity getByUsername(String username);
