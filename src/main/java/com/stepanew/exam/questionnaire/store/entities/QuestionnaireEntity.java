@@ -6,6 +6,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -21,9 +22,11 @@ public class QuestionnaireEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "questionnaire_id")
     Long id;
+
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "user_id")
     UserEntity creatorId;
+
     @Column(name = "title")
     String title;
 
@@ -35,11 +38,12 @@ public class QuestionnaireEntity {
     Category category;
 
     @Builder.Default
-    Instant createdAt = Instant.now();
+    LocalDateTime createdAt = LocalDateTime.now();
 
     @OneToMany(mappedBy = "questionnaire",
             cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH},
             fetch = FetchType.LAZY,
             orphanRemoval = true)
     List<QuestionEntity> questions;
+
 }

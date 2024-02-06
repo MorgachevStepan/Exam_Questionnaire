@@ -3,12 +3,9 @@ package com.stepanew.exam.questionnaire.api.services;
 import com.stepanew.exam.questionnaire.api.DTOs.Dto.QuestionDto;
 import com.stepanew.exam.questionnaire.api.DTOs.Request.QuestionCreateRequestDto;
 import com.stepanew.exam.questionnaire.api.DTOs.Request.QuestionUpdateRequestDto;
-import com.stepanew.exam.questionnaire.store.entities.QuestionEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 public interface QuestionService {
 
