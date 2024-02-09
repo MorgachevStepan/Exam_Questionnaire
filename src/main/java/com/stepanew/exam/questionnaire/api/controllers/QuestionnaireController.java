@@ -1,8 +1,6 @@
 package com.stepanew.exam.questionnaire.api.controllers;
 
-import com.stepanew.exam.questionnaire.api.DTOs.Dto.QuestionDto;
 import com.stepanew.exam.questionnaire.api.DTOs.Dto.QuestionnaireDto;
-import com.stepanew.exam.questionnaire.api.DTOs.Request.QuestionCreateRequestDto;
 import com.stepanew.exam.questionnaire.api.DTOs.Request.QuestionnaireCreateRequestDto;
 import com.stepanew.exam.questionnaire.api.DTOs.Request.QuestionnaireUpdateRequestDto;
 import com.stepanew.exam.questionnaire.api.services.QuestionnaireService;
@@ -14,6 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,6 +28,7 @@ public class QuestionnaireController {
     final QuestionnaireService questionnaireService;
 
     @GetMapping("/{id}")
+    @PreAuthorize("@customSecurityExpression.canAccessUserToQuestionnaire(#id)")
     public ResponseEntity<QuestionnaireDto> getById(@PathVariable Long id) {
         QuestionnaireDto response = questionnaireService.getById(id);
         return ResponseEntity
@@ -37,8 +37,9 @@ public class QuestionnaireController {
     }
 
     @GetMapping("/")
+    @PreAuthorize("@customSecurityExpression.canAccessUser(#userId)")
     public ResponseEntity<Page<QuestionnaireDto>> getAllByUserId(
-            @RequestParam(name = "user_id") Long userId,
+            @RequestParam Long userId,
             @RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
             @RequestParam(name = "offset", required = false, defaultValue = "20") Integer offset,
             @RequestParam(name = "title", required = false, defaultValue = "") String title,
@@ -64,6 +65,7 @@ public class QuestionnaireController {
     }
 
     @GetMapping("/all")
+    @PreAuthorize(value = "hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
     public ResponseEntity<Page<QuestionnaireDto>> getAll(
             @RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
             @RequestParam(name = "offset", required = false, defaultValue = "20") Integer offset,
@@ -89,6 +91,7 @@ public class QuestionnaireController {
     }
 
     @PostMapping("/")
+    @PreAuthorize(value = "hasAnyRole('ROLE_ADMIN, ROLE_USER')")
     public ResponseEntity<QuestionnaireDto> addNewQuestionnaire(@RequestBody @Validated QuestionnaireCreateRequestDto requestDto) {
         QuestionnaireDto response = questionnaireService.create(requestDto);
         return ResponseEntity
@@ -97,6 +100,7 @@ public class QuestionnaireController {
     }
 
     @PutMapping("/")
+    @PreAuthorize("@customSecurityExpression.canAccessUserToQuestionnaire(#requestDto.getQuestionnaireId())")
     public ResponseEntity<QuestionnaireDto> updateQuestionnaire(@RequestBody @Validated QuestionnaireUpdateRequestDto requestDto){
         QuestionnaireDto response = questionnaireService.update(requestDto);
         return ResponseEntity
@@ -105,6 +109,7 @@ public class QuestionnaireController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("@customSecurityExpression.canAccessUserToQuestionnaire(#id)")
     public ResponseEntity<Void> deleteQuestionnaire(@PathVariable Long id){
         questionnaireService.delete(id);
         return ResponseEntity

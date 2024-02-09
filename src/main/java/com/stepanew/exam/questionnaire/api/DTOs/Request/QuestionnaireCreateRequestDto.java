@@ -1,6 +1,5 @@
 package com.stepanew.exam.questionnaire.api.DTOs.Request;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.stepanew.exam.questionnaire.api.enums.Category;
 import com.stepanew.exam.questionnaire.store.entities.QuestionnaireEntity;
 import jakarta.validation.constraints.NotNull;
@@ -16,7 +15,6 @@ import org.hibernate.validator.constraints.Length;
 public class QuestionnaireCreateRequestDto {
 
     @NotNull(message = "UserId is must be not null")
-    @JsonProperty("user_id")
     Long userId;
 
     @NotNull(message = "Title is must be not null")

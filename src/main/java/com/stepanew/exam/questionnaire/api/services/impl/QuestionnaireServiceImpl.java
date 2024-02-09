@@ -1,14 +1,10 @@
 package com.stepanew.exam.questionnaire.api.services.impl;
 
-import com.stepanew.exam.questionnaire.api.DTOs.Dto.QuestionDto;
 import com.stepanew.exam.questionnaire.api.DTOs.Dto.QuestionnaireDto;
-import com.stepanew.exam.questionnaire.api.DTOs.Request.QuestionCreateRequestDto;
 import com.stepanew.exam.questionnaire.api.DTOs.Request.QuestionnaireCreateRequestDto;
 import com.stepanew.exam.questionnaire.api.DTOs.Request.QuestionnaireUpdateRequestDto;
-import com.stepanew.exam.questionnaire.api.enums.Category;
 import com.stepanew.exam.questionnaire.api.services.QuestionnaireService;
 import com.stepanew.exam.questionnaire.exception.ResourceNotFoundException;
-import com.stepanew.exam.questionnaire.store.entities.QuestionEntity;
 import com.stepanew.exam.questionnaire.store.entities.QuestionnaireEntity;
 import com.stepanew.exam.questionnaire.store.entities.UserEntity;
 import com.stepanew.exam.questionnaire.store.repositories.QuestionnaireRepository;
@@ -20,10 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.util.Calendar;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -31,6 +24,7 @@ import java.util.List;
 public class QuestionnaireServiceImpl implements QuestionnaireService {
 
     final QuestionnaireRepository questionnaireRepository;
+
     final UserRepository userRepository;
 
     @Override

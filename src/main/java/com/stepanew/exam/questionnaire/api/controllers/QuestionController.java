@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,6 +26,7 @@ public class QuestionController {
     final QuestionService questionService;
 
     @GetMapping("/{id}")
+    @PreAuthorize("@customSecurityExpression.canAccessUserToQuestion(#id)")
     public ResponseEntity<QuestionDto> getById(@PathVariable Long id){
         QuestionDto question = questionService.getById(id);
         return ResponseEntity
@@ -33,6 +35,7 @@ public class QuestionController {
     }
 
     @GetMapping("/")
+    @PreAuthorize("@customSecurityExpression.canAccessUserToQuestionnaire(#questionnaireId)")
     public ResponseEntity<Page<QuestionDto>> getByAllByQuestionnaireId(
             @RequestParam Long questionnaireId,
             @RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
@@ -52,6 +55,7 @@ public class QuestionController {
     }
 
     @PostMapping("/")
+    @PreAuthorize("@customSecurityExpression.canAccessUserToQuestionnaire(#requestDto.getQuestionnaireId())")
     public ResponseEntity<QuestionDto> addNewQuestion(@RequestBody @Validated QuestionCreateRequestDto requestDto) {
         QuestionDto response = questionService.create(requestDto);
         return ResponseEntity
@@ -60,6 +64,7 @@ public class QuestionController {
     }
 
     @PutMapping("/")
+    @PreAuthorize("@customSecurityExpression.canAccessUserToQuestion(#requestDto.getQuestionId())")
     public ResponseEntity<QuestionDto> updateQuestion(@RequestBody @Validated QuestionUpdateRequestDto requestDto){
         QuestionDto response = questionService.update(requestDto);
         return ResponseEntity
@@ -68,6 +73,7 @@ public class QuestionController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("@customSecurityExpression.canAccessUserToQuestion(#id)")
     public ResponseEntity<Void> deleteQuestion(@PathVariable Long id){
         questionService.delete(id);
         return ResponseEntity

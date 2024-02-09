@@ -1,13 +1,11 @@
 package com.stepanew.exam.questionnaire.api.DTOs.Dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.stepanew.exam.questionnaire.store.entities.QuestionnaireEntity;
 import com.stepanew.exam.questionnaire.api.enums.Category;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
 
 @Data
@@ -28,7 +26,6 @@ public class QuestionnaireDto {
     @NonNull
     Category category;
 
-    @JsonProperty("created_at")
     LocalDateTime createdAt;
 
     public static QuestionnaireDto MapFromEntity(QuestionnaireEntity questionnaireEntity){

@@ -1,6 +1,5 @@
 package com.stepanew.exam.questionnaire.api.DTOs.Request;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.stepanew.exam.questionnaire.api.enums.Category;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -15,7 +14,6 @@ import org.hibernate.validator.constraints.Length;
 public class QuestionnaireUpdateRequestDto {
 
     @NotNull(message = "Id must be not null")
-    @JsonProperty("questionnaire_id")
     Long questionnaireId;
 
     @Length(max = 255, message = "Max title`s length is 255 characters")

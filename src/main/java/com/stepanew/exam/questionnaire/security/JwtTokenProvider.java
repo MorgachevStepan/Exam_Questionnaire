@@ -1,6 +1,5 @@
 package com.stepanew.exam.questionnaire.security;
 
-import com.stepanew.exam.questionnaire.api.DTOs.Dto.UserDto;
 import com.stepanew.exam.questionnaire.api.DTOs.auth.JwtResponse;
 import com.stepanew.exam.questionnaire.api.services.JwtProperties;
 import com.stepanew.exam.questionnaire.api.services.UserService;
@@ -8,6 +7,7 @@ import com.stepanew.exam.questionnaire.exception.AccessDeniedException;
 import com.stepanew.exam.questionnaire.store.entities.RoleEntity;
 import com.stepanew.exam.questionnaire.store.entities.UserEntity;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -76,12 +76,15 @@ public class JwtTokenProvider {
     }
 
     public boolean validateToken(String token){
-        Jws<Claims> claims = Jwts
-                .parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(token);
-        return !claims.getBody().getExpiration().before(new Date());
+        try {
+            Jws<Claims> claims = Jwts
+                    .parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token);
+            return !claims.getBody().getExpiration().before(new Date());
+        } catch (ExpiredJwtException ignored) {}
+        return false;
     }
 
     public Authentication getAuthentication(String token){
