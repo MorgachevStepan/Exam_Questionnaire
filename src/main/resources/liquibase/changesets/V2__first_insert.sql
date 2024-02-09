@@ -1,6 +1,6 @@
 insert into users (username, password)
-values ('Ivan Ivanchick', '$2y$10$60DK8JY5dxe9NoRINgDjHuHpiVbfsFsh75OHcACzbvgzjJAnvXLDO'),
-       ('Demon2009', '$2y$10$diBIbieBUHB3SsigIT0k..f1Vu/GtXOHswwGckwRaKLusRdHxQvj2');
+values ('Admin', '$2y$10$06FlDAJkw4hFQ5Wj500BPuFbIPjwfdrI1PESN/xvj1T9SU9VtnEJK'),
+       ('Ivan', '$2y$10$aHWVdEVohb7EH9qpXHLJauprSxdPKaABjkhKSoegZTmkv7puVmaRC');
 
 insert into roles(name)
 values ('ROLE_ADMIN'),

@@ -1,7 +1,7 @@
 insert into questionnaires (user_id, title, category, description, created_at)
-values (1, 'Maths test', 'Math', 'This test contains some questions about math', '2024-01-29 12:00:00'),
-       (1, 'Geom test', 'Math', 'This test contains some questions about geom',  '2024-01-31 00:00:00'),
-       (2, 'Test', 'History', 'Hello from 2009!!!', '2024-02-1 00:00:00');
+values (1, 'Maths test', 'MATH', 'This test contains some questions about math', '2024-01-29 12:00:00'),
+       (1, 'Geom test', 'MATH', 'This test contains some questions about geom',  '2024-01-31 00:00:00'),
+       (2, 'Test', 'HISTORY', 'Hello from 2009!!!', '2024-02-1 00:00:00');
 
 insert into questions (questionnaire_id, answer, task)
 values (1, '5', '2 + 3 = ?'),

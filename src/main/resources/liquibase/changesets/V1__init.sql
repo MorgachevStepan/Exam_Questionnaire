@@ -21,7 +21,7 @@ create table if not exists questions
     question_id bigserial primary key,
     questionnaire_id bigint not null,
     answer varchar(255) not null,
-    task varchar(255) not null unique,
+    task varchar(255) not null,
     constraint fk_questions_questionnaires foreign key (questionnaire_id)
         references questionnaires (questionnaire_id)
         on delete cascade on update no action
