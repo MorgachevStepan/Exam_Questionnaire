@@ -3,11 +3,16 @@ package com.stepanew.exam.questionnaire.api.services.impl;
 import com.stepanew.exam.questionnaire.api.DTOs.Dto.QuestionnaireDto;
 import com.stepanew.exam.questionnaire.api.DTOs.Request.QuestionnaireCreateRequestDto;
 import com.stepanew.exam.questionnaire.api.DTOs.Request.QuestionnaireUpdateRequestDto;
+import com.stepanew.exam.questionnaire.api.DTOs.Response.QuestionnaireStartedResponseDto;
+import com.stepanew.exam.questionnaire.api.enums.Status;
 import com.stepanew.exam.questionnaire.api.services.QuestionnaireService;
+import com.stepanew.exam.questionnaire.exception.QuestionnaireWasStartedException;
 import com.stepanew.exam.questionnaire.exception.ResourceNotFoundException;
 import com.stepanew.exam.questionnaire.store.entities.QuestionnaireEntity;
+import com.stepanew.exam.questionnaire.store.entities.QuestionnaireStatusEntity;
 import com.stepanew.exam.questionnaire.store.entities.UserEntity;
 import com.stepanew.exam.questionnaire.store.repositories.QuestionnaireRepository;
+import com.stepanew.exam.questionnaire.store.repositories.QuestionnaireStatusRepository;
 import com.stepanew.exam.questionnaire.store.repositories.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +31,9 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
     final QuestionnaireRepository questionnaireRepository;
 
     final UserRepository userRepository;
+
+    final QuestionnaireStatusRepository questionnaireStatusRepository;
+
 
     @Override
     public QuestionnaireDto getById(Long id) {
@@ -132,6 +140,41 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
                         String.format("Questionnaire with id = %d is not exist", id)
                 ));
         questionnaireRepository.delete(deletedQuestionnaire);
+    }
+
+    @Override
+    public QuestionnaireStartedResponseDto startQuestionnaire(Long questionnaireId, String username) {
+        UserEntity user = userRepository
+                .findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        String.format("User with username = %s is not exist ", username)
+                ));
+        QuestionnaireEntity questionnaire = questionnaireRepository
+                .findById(questionnaireId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        String.format("Questionnaire with id = %d is not exist", questionnaireId)
+                ));
+
+        boolean isStarted = questionnaireStatusRepository
+                .findByUser_IdAndQuestionnaireId(user.getId(), questionnaire.getId())
+                .isPresent();
+
+        if(isStarted){
+            throw new QuestionnaireWasStartedException(
+                    String.format("User with id = %d already have started questionnaire with id = %d", user.getId(), questionnaire.getId())
+            );
+        }
+
+        QuestionnaireStatusEntity questionnaireStatus = QuestionnaireStatusEntity
+                .builder()
+                .user(user)
+                .questionnaire(questionnaire)
+                .status(Status.IN_PROCESS)
+                .build();
+
+        questionnaireStatusRepository.save(questionnaireStatus);
+
+        return QuestionnaireStartedResponseDto.mapFromEntity(questionnaireStatus);
     }
 
     private boolean isExistById(Long id) {

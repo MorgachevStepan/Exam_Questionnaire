@@ -1,8 +1,11 @@
 package com.stepanew.exam.questionnaire.security.expression;
 
+import com.stepanew.exam.questionnaire.api.enums.Status;
 import com.stepanew.exam.questionnaire.security.JwtEntity;
+import com.stepanew.exam.questionnaire.store.entities.QuestionnaireStatusEntity;
 import com.stepanew.exam.questionnaire.store.repositories.QuestionRepository;
 import com.stepanew.exam.questionnaire.store.repositories.QuestionnaireRepository;
+import com.stepanew.exam.questionnaire.store.repositories.QuestionnaireStatusRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -11,6 +14,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service("customSecurityExpression")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -18,6 +23,7 @@ public class CustomSecurityExpression {
 
     final QuestionnaireRepository questionnaireRepository;
     final QuestionRepository questionRepository;
+    final QuestionnaireStatusRepository questionnaireStatusRepository;
 
     public boolean canAccessUserToQuestion(Long questionId){
         Long userId = getAuthenticationId();
@@ -30,6 +36,20 @@ public class CustomSecurityExpression {
 
         return questionnaireRepository.isUsersQuestionnaire(userId, questionnaireId)
                 || hasAnyRole("ROLE_ADMIN");
+    }
+
+    public boolean canAccessUserToStartedQuestionnaire(Long questionnaireId){
+        boolean canAccess = false;
+        Long userId = getAuthenticationId();
+
+        Optional<QuestionnaireStatusEntity> questionnaireStatus = questionnaireStatusRepository
+                .findByUser_IdAndQuestionnaireId(userId, questionnaireId);
+
+        if(questionnaireStatus.isPresent()){
+            canAccess = questionnaireStatus.get().getStatus().equals(Status.IN_PROCESS);
+        }
+
+        return canAccess || canAccessUserToQuestionnaire(questionnaireId);
     }
 
     public boolean canAccessUser(Long userId){

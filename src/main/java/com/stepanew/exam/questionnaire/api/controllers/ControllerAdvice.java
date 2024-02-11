@@ -3,6 +3,7 @@ package com.stepanew.exam.questionnaire.api.controllers;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.stepanew.exam.questionnaire.exception.AccessDeniedException;
 import com.stepanew.exam.questionnaire.exception.ExceptionBody;
+import com.stepanew.exam.questionnaire.exception.QuestionnaireWasStartedException;
 import com.stepanew.exam.questionnaire.exception.ResourceNotFoundException;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.http.HttpStatus;
@@ -35,6 +36,12 @@ public class ControllerAdvice {
         exceptionBody.setErrors(errors.stream()
                 .collect(Collectors.toMap(FieldError::getField, FieldError::getDefaultMessage)));
         return exceptionBody;
+    }
+
+    @ExceptionHandler(QuestionnaireWasStartedException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ExceptionBody handleQuestionnaireWasStartedException(QuestionnaireWasStartedException e){
+        return new ExceptionBody(e.getMessage());
     }
 
     @ExceptionHandler(InvalidFormatException.class)

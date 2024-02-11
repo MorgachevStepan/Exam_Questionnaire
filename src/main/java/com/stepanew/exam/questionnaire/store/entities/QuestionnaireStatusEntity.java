@@ -22,20 +22,20 @@ public class QuestionnaireStatusEntity {
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "user_id", nullable = false)
-    private UserEntity user;
+    UserEntity user;
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "questionnaire_id", nullable = false)
-    private QuestionnaireEntity questionnaire;
+    QuestionnaireEntity questionnaire;
 
     @Column(name = "status")
     @Enumerated(value = EnumType.STRING)
-    private Status status;
+    Status status;
 
     @Column(name = "correct_answers")
-    private Integer correctAnswers;
+    Integer correctAnswers;
 
     @Column(name = "incorrect_answers")
-    private Integer incorrectAnswers;
+    Integer incorrectAnswers;
 
 }

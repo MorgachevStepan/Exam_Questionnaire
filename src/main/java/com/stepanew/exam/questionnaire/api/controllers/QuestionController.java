@@ -35,8 +35,8 @@ public class QuestionController {
     }
 
     @GetMapping("/")
-    @PreAuthorize("@customSecurityExpression.canAccessUserToQuestionnaire(#questionnaireId)")
-    public ResponseEntity<Page<QuestionDto>> getByAllByQuestionnaireId(
+    @PreAuthorize("@customSecurityExpression.canAccessUserToStartedQuestionnaire(#questionnaireId)")
+    public ResponseEntity<Page<QuestionDto>> getAllByQuestionnaireId(
             @RequestParam Long questionnaireId,
             @RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
             @RequestParam(name = "offset", required = false, defaultValue = "20") Integer offset) {
