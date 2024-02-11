@@ -3,7 +3,6 @@ package com.stepanew.exam.questionnaire.api.services.impl;
 import com.stepanew.exam.questionnaire.api.DTOs.Dto.UserDto;
 import com.stepanew.exam.questionnaire.api.DTOs.Request.UserRegisterRequestDto;
 import com.stepanew.exam.questionnaire.api.services.UserService;
-import com.stepanew.exam.questionnaire.exception.ResourceNotFoundException;
 import com.stepanew.exam.questionnaire.store.entities.RoleEntity;
 import com.stepanew.exam.questionnaire.store.entities.UserEntity;
 import com.stepanew.exam.questionnaire.store.repositories.UserRepository;
@@ -14,6 +13,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
+
+import static com.stepanew.exam.questionnaire.exception.ResourceNotFoundException.resourceNotFoundExceptionSupplier;
 
 @Service
 @RequiredArgsConstructor
@@ -28,8 +29,9 @@ public class UserServiceImpl implements UserService {
         return userRepository
                 .findById(id)
                 .orElseThrow(
-                        () -> new ResourceNotFoundException(
-                                String.format("User with id = %d not found", id)
+                        resourceNotFoundExceptionSupplier(
+                                "User with id = %d not found",
+                                id
                         )
                 );
     }
@@ -39,8 +41,9 @@ public class UserServiceImpl implements UserService {
         return userRepository
                 .findByUsername(username)
                 .orElseThrow(
-                        () -> new ResourceNotFoundException(
-                                String.format("User with username = %s not found", username)
+                        resourceNotFoundExceptionSupplier(
+                                "User with username = %s not found",
+                                username
                         )
                 );
     }

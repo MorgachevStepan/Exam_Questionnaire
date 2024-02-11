@@ -23,6 +23,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
+import static com.stepanew.exam.questionnaire.exception.ResourceNotFoundException.resourceNotFoundExceptionSupplier;
+
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -37,13 +39,15 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
 
     @Override
     public QuestionnaireDto getById(Long id) {
-        return QuestionnaireDto.MapFromEntity(questionnaireRepository
-                .findById(id)
-                .orElseThrow(
-                        () -> new ResourceNotFoundException(
-                                String.format("Questionnaire with id = %d is not exist", id)
+        return QuestionnaireDto.MapFromEntity(
+                questionnaireRepository
+                        .findById(id)
+                        .orElseThrow(
+                                resourceNotFoundExceptionSupplier(
+                                        "Questionnaire with id = %d is not exist", id
+                                )
                         )
-                ));
+        );
     }
 
     @Override
@@ -63,12 +67,12 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
                     );
             if (response.isEmpty()) {
                 throw new ResourceNotFoundException(
-                        String.format("Nothing was found on page number %d", pageable.getPageNumber())
+                       "Nothing was found on page number %d", pageable.getPageNumber()
                 );
             }
             return response.map(QuestionnaireDto::MapFromEntity);
         } else {
-            throw new ResourceNotFoundException(String.format("User with id = %d is not exist", id));
+            throw new ResourceNotFoundException("User with id = %d is not exist", id);
         }
     }
 
@@ -87,7 +91,7 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
 
         if(response.isEmpty()){
             throw new ResourceNotFoundException(
-                    String.format("Nothing was found on page number %d", pageable.getPageNumber())
+                    "Nothing was found on page number %d", pageable.getPageNumber()
             );
         }
 
@@ -101,8 +105,9 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
         UserEntity user = userRepository
                 .findById(requestDto.getUserId())
                 .orElseThrow(
-                        () -> new ResourceNotFoundException(
-                                String.format("User with id = %d is not exist", requestDto.getUserId())
+                        resourceNotFoundExceptionSupplier(
+                                "User with id = %d is not exist",
+                                requestDto.getUserId()
                         )
                 );
         questionnaire.setCreatorId(user);
@@ -115,17 +120,19 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
     public QuestionnaireDto update(QuestionnaireUpdateRequestDto requestDto) {
         QuestionnaireEntity updatedQuestionnaire = questionnaireRepository
                 .findById(requestDto.getQuestionnaireId())
-                .orElseThrow(() -> new ResourceNotFoundException(
-                                String.format("Questionnaire with id = %d is not exist", requestDto.getQuestionnaireId())
+                .orElseThrow(
+                        resourceNotFoundExceptionSupplier(
+                                "Questionnaire with id = %d is not exist",
+                                requestDto.getQuestionnaireId()
                         )
                 );
-        if(requestDto.getCategory() != null){
+        if (requestDto.getCategory() != null) {
             updatedQuestionnaire.setCategory(requestDto.getCategory());
         }
-        if(requestDto.getTitle() != null){
+        if (requestDto.getTitle() != null) {
             updatedQuestionnaire.setTitle(requestDto.getTitle());
         }
-        if(requestDto.getDescription() != null){
+        if (requestDto.getDescription() != null) {
             updatedQuestionnaire.setDescription(requestDto.getDescription());
         }
         questionnaireRepository.save(updatedQuestionnaire);
@@ -136,9 +143,12 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
     public void delete(Long id) {
         QuestionnaireEntity deletedQuestionnaire = questionnaireRepository
                 .findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        String.format("Questionnaire with id = %d is not exist", id)
-                ));
+                .orElseThrow(
+                        resourceNotFoundExceptionSupplier(
+                                "Questionnaire with id = %d is not exist",
+                                id
+                        )
+                );
         questionnaireRepository.delete(deletedQuestionnaire);
     }
 
@@ -146,14 +156,19 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
     public QuestionnaireStartedResponseDto startQuestionnaire(Long questionnaireId, String username) {
         UserEntity user = userRepository
                 .findByUsername(username)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        String.format("User with username = %s is not exist ", username)
-                ));
+                .orElseThrow(
+                        resourceNotFoundExceptionSupplier(
+                                "User with username = %s is not exist ",
+                                username
+                        )
+                );
         QuestionnaireEntity questionnaire = questionnaireRepository
                 .findById(questionnaireId)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        String.format("Questionnaire with id = %d is not exist", questionnaireId)
-                ));
+                .orElseThrow(resourceNotFoundExceptionSupplier(
+                        "Questionnaire with id = %d is not exist",
+                        questionnaireId
+                        )
+                   );
 
         boolean isStarted = questionnaireStatusRepository
                 .findByUser_IdAndQuestionnaireId(user.getId(), questionnaire.getId())
@@ -161,7 +176,9 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
 
         if(isStarted){
             throw new QuestionnaireWasStartedException(
-                    String.format("User with id = %d already have started questionnaire with id = %d", user.getId(), questionnaire.getId())
+                    "User with id = %d already have started questionnaire with id = %d",
+                    user.getId(),
+                    questionnaire.getId()
             );
         }
 
