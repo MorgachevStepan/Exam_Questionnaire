@@ -1,8 +1,10 @@
 package com.stepanew.exam.questionnaire.api.services.impl;
 
 import com.stepanew.exam.questionnaire.api.DTOs.Dto.QuestionnaireDto;
+import com.stepanew.exam.questionnaire.api.DTOs.Request.AnswerListRequestDto;
 import com.stepanew.exam.questionnaire.api.DTOs.Request.QuestionnaireCreateRequestDto;
 import com.stepanew.exam.questionnaire.api.DTOs.Request.QuestionnaireUpdateRequestDto;
+import com.stepanew.exam.questionnaire.api.DTOs.Response.QuestionnaireAnsweredResponseDto;
 import com.stepanew.exam.questionnaire.api.DTOs.Response.QuestionnaireStartedResponseDto;
 import com.stepanew.exam.questionnaire.api.enums.Status;
 import com.stepanew.exam.questionnaire.api.services.QuestionnaireService;
@@ -21,6 +23,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
 import java.time.LocalDateTime;
 
 import static com.stepanew.exam.questionnaire.exception.ResourceNotFoundException.resourceNotFoundExceptionSupplier;
@@ -39,15 +42,7 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
 
     @Override
     public QuestionnaireDto getById(Long id) {
-        return QuestionnaireDto.MapFromEntity(
-                questionnaireRepository
-                        .findById(id)
-                        .orElseThrow(
-                                resourceNotFoundExceptionSupplier(
-                                        "Questionnaire with id = %d is not exist", id
-                                )
-                        )
-        );
+        return QuestionnaireDto.MapFromEntity(getQuestionnaire(id));
     }
 
     @Override
@@ -118,14 +113,7 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
 
     @Override
     public QuestionnaireDto update(QuestionnaireUpdateRequestDto requestDto) {
-        QuestionnaireEntity updatedQuestionnaire = questionnaireRepository
-                .findById(requestDto.getQuestionnaireId())
-                .orElseThrow(
-                        resourceNotFoundExceptionSupplier(
-                                "Questionnaire with id = %d is not exist",
-                                requestDto.getQuestionnaireId()
-                        )
-                );
+        QuestionnaireEntity updatedQuestionnaire = getQuestionnaire(requestDto.getQuestionnaireId());
         if (requestDto.getCategory() != null) {
             updatedQuestionnaire.setCategory(requestDto.getCategory());
         }
@@ -141,34 +129,14 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
 
     @Override
     public void delete(Long id) {
-        QuestionnaireEntity deletedQuestionnaire = questionnaireRepository
-                .findById(id)
-                .orElseThrow(
-                        resourceNotFoundExceptionSupplier(
-                                "Questionnaire with id = %d is not exist",
-                                id
-                        )
-                );
+        QuestionnaireEntity deletedQuestionnaire = getQuestionnaire(id);
         questionnaireRepository.delete(deletedQuestionnaire);
     }
 
     @Override
     public QuestionnaireStartedResponseDto startQuestionnaire(Long questionnaireId, String username) {
-        UserEntity user = userRepository
-                .findByUsername(username)
-                .orElseThrow(
-                        resourceNotFoundExceptionSupplier(
-                                "User with username = %s is not exist ",
-                                username
-                        )
-                );
-        QuestionnaireEntity questionnaire = questionnaireRepository
-                .findById(questionnaireId)
-                .orElseThrow(resourceNotFoundExceptionSupplier(
-                        "Questionnaire with id = %d is not exist",
-                        questionnaireId
-                        )
-                   );
+        UserEntity user = getUser(username);
+        QuestionnaireEntity questionnaire = getQuestionnaire(questionnaireId);
 
         boolean isStarted = questionnaireStatusRepository
                 .findByUser_IdAndQuestionnaireId(user.getId(), questionnaire.getId())
@@ -194,8 +162,34 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
         return QuestionnaireStartedResponseDto.mapFromEntity(questionnaireStatus);
     }
 
+    @Override
+    public QuestionnaireAnsweredResponseDto answerQuestionnaire(AnswerListRequestDto answerRequestDto, Principal principal) {
+        return null;
+    }
+
     private boolean isExistById(Long id) {
         return userRepository.existsById(id);
+    }
+
+    private QuestionnaireEntity getQuestionnaire(Long id) {
+        return questionnaireRepository
+                .findById(id)
+                .orElseThrow(resourceNotFoundExceptionSupplier(
+                                "Questionnaire with id = %d is not exist",
+                                id
+                        )
+                );
+    }
+
+    private UserEntity getUser(String username) {
+        return userRepository
+                .findByUsername(username)
+                .orElseThrow(
+                        resourceNotFoundExceptionSupplier(
+                                "User with username = %s is not exist ",
+                                username
+                        )
+                );
     }
 
 }
