@@ -1,8 +1,12 @@
 package com.stepanew.exam.questionnaire.api.controllers;
 
 import com.stepanew.exam.questionnaire.api.DTOs.Dto.QuestionnaireDto;
+import com.stepanew.exam.questionnaire.api.DTOs.Request.AnswerListRequestDto;
 import com.stepanew.exam.questionnaire.api.DTOs.Request.QuestionnaireCreateRequestDto;
 import com.stepanew.exam.questionnaire.api.DTOs.Request.QuestionnaireUpdateRequestDto;
+import com.stepanew.exam.questionnaire.api.DTOs.Response.QuestionnaireAnsweredResponseDto;
+import com.stepanew.exam.questionnaire.api.DTOs.Response.QuestionnaireStartedResponseDto;
+import com.stepanew.exam.questionnaire.api.DTOs.Response.StatisticResponseDto;
 import com.stepanew.exam.questionnaire.api.services.QuestionnaireService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +21,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.security.Principal;
 import java.time.LocalDateTime;
 
 @RestController
@@ -115,6 +120,35 @@ public class QuestionnaireController {
         return ResponseEntity
                 .status(HttpStatus.NO_CONTENT)
                 .build();
+    }
+
+    @PostMapping("/{id}/start")
+    @PreAuthorize(value = "hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
+    public ResponseEntity<QuestionnaireStartedResponseDto> startQuestionnaire(@PathVariable Long id, Principal principal){
+        QuestionnaireStartedResponseDto response = questionnaireService.startQuestionnaire(id, principal.getName());
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(response);
+    }
+
+    @PostMapping("/answer")
+    @PreAuthorize(value = "hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
+    public ResponseEntity<QuestionnaireAnsweredResponseDto> answerQuestionnaire(@RequestBody @Validated AnswerListRequestDto answerRequestDto,
+                                                                                Principal principal){
+        QuestionnaireAnsweredResponseDto response = questionnaireService.answerQuestionnaire(answerRequestDto, principal.getName());
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(response);
+    }
+
+    @GetMapping("/{id}/statistics")
+    @PreAuthorize(value = "hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
+    public ResponseEntity<StatisticResponseDto> getStatistic(@PathVariable Long id, Principal principal){
+        StatisticResponseDto response = questionnaireService.getStatistic(id, principal.getName());
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(response);
+
     }
 
 }

@@ -19,4 +19,15 @@ public interface QuestionRepository extends JpaRepository<QuestionEntity, Long> 
             WHERE q.questionnaire.creatorId.id = :userId 
               AND q.id = :questionId""")
     boolean isUsersQuestion(Long userId, Long questionId);
+
+    @Query("""
+           SELECT CASE
+                      WHEN COUNT(q) > 0 THEN TRUE
+                      ELSE FALSE 
+                      END 
+           FROM QuestionEntity q
+           WHERE q.questionnaire.id = :questionnaireId
+           AND q.id = :questionId""")
+    boolean isQuestionnaireQuestion(Long questionnaireId, Long questionId);
+
 }

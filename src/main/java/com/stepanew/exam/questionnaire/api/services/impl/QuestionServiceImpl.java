@@ -16,7 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import static com.stepanew.exam.questionnaire.exception.ResourceNotFoundException.resourceNotFoundExceptionSupplier;
 
 @Service
 @RequiredArgsConstructor
@@ -31,9 +31,7 @@ public class QuestionServiceImpl implements QuestionService {
         QuestionEntity question = questionRepository
                 .findById(id)
                 .orElseThrow(
-                        () -> new ResourceNotFoundException(
-                                String.format("Question with id = %d is not found", id)
-                        )
+                        resourceNotFoundExceptionSupplier("Question with id = %d is not found", id)
                 );
         return QuestionDto.mapFromEntity(question);
     }
@@ -43,9 +41,9 @@ public class QuestionServiceImpl implements QuestionService {
         Page<QuestionEntity> response = questionRepository
                 .findAllByQuestionnaireId(questionnaireId, pageable);
 
-        if(response.isEmpty()){
+        if (response.isEmpty()) {
             throw new ResourceNotFoundException(
-                    String.format("Nothing was found on page number %d", pageable.getPageNumber())
+                    "Nothing was found on page number %d", pageable.getPageNumber()
             );
         }
 
@@ -58,8 +56,9 @@ public class QuestionServiceImpl implements QuestionService {
         QuestionnaireEntity questionnaire = questionnaireRepository
                 .findById(requestDto.getQuestionnaireId())
                 .orElseThrow(
-                        () -> new ResourceNotFoundException(
-                                String.format("Questionnaire with id = %d is not exist", requestDto.getQuestionnaireId())
+                        resourceNotFoundExceptionSupplier(
+                                "Questionnaire with id = %d is not exist",
+                                requestDto.getQuestionnaireId()
                         )
                 );
         question.setQuestionnaire(questionnaire);
@@ -72,8 +71,9 @@ public class QuestionServiceImpl implements QuestionService {
     public QuestionDto update(QuestionUpdateRequestDto question) {
         QuestionEntity updatedQuestion = questionRepository
                 .findById(question.getQuestionId())
-                .orElseThrow(() -> new ResourceNotFoundException(
-                                String.format("Question with id = %d is not exist", question.getQuestionId())
+                .orElseThrow(
+                        resourceNotFoundExceptionSupplier(
+                                "Question with id = %d is not exist", question.getQuestionId()
                         )
                 );
         if(question.getTask() != null){
@@ -90,9 +90,11 @@ public class QuestionServiceImpl implements QuestionService {
     public void delete(Long questionId) {
         QuestionEntity deletedQuestion = questionRepository
                 .findById(questionId)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        String.format("Question with id = %d is not exist", questionId)
-                ));
+                .orElseThrow(
+                        resourceNotFoundExceptionSupplier(
+                                "Question with id = %d is not exist", questionId
+                        )
+                );
         questionRepository.delete(deletedQuestion);
     }
 
