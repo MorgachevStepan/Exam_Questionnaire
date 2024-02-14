@@ -1,8 +1,10 @@
 package com.stepanew.exam.questionnaire.api.services;
 
 import com.stepanew.exam.questionnaire.api.DTOs.Dto.QuestionnaireDto;
+import com.stepanew.exam.questionnaire.api.DTOs.Request.AnswerListRequestDto;
 import com.stepanew.exam.questionnaire.api.DTOs.Request.QuestionnaireCreateRequestDto;
 import com.stepanew.exam.questionnaire.api.DTOs.Request.QuestionnaireUpdateRequestDto;
+import com.stepanew.exam.questionnaire.api.DTOs.Response.QuestionnaireAnsweredResponseDto;
 import com.stepanew.exam.questionnaire.api.DTOs.Response.QuestionnaireStartedResponseDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -32,5 +34,8 @@ public interface QuestionnaireService {
 
     @Transactional
     QuestionnaireStartedResponseDto startQuestionnaire(Long questionnaireId, String username);
+
+    @Transactional
+    QuestionnaireAnsweredResponseDto answerQuestionnaire(AnswerListRequestDto answerRequestDto, String username);
 
 }

@@ -2,17 +2,20 @@ package com.stepanew.exam.questionnaire.api.services.impl;
 
 import com.stepanew.exam.questionnaire.api.DTOs.Dto.QuestionnaireDto;
 import com.stepanew.exam.questionnaire.api.DTOs.Request.AnswerListRequestDto;
+import com.stepanew.exam.questionnaire.api.DTOs.Request.AnswerRequestDto;
 import com.stepanew.exam.questionnaire.api.DTOs.Request.QuestionnaireCreateRequestDto;
 import com.stepanew.exam.questionnaire.api.DTOs.Request.QuestionnaireUpdateRequestDto;
 import com.stepanew.exam.questionnaire.api.DTOs.Response.QuestionnaireAnsweredResponseDto;
 import com.stepanew.exam.questionnaire.api.DTOs.Response.QuestionnaireStartedResponseDto;
+import com.stepanew.exam.questionnaire.api.enums.Answer;
 import com.stepanew.exam.questionnaire.api.enums.Status;
 import com.stepanew.exam.questionnaire.api.services.QuestionnaireService;
-import com.stepanew.exam.questionnaire.exception.QuestionnaireWasStartedException;
+import com.stepanew.exam.questionnaire.exception.QuestionnaireBadRequestException;
 import com.stepanew.exam.questionnaire.exception.ResourceNotFoundException;
 import com.stepanew.exam.questionnaire.store.entities.QuestionnaireEntity;
 import com.stepanew.exam.questionnaire.store.entities.QuestionnaireStatusEntity;
 import com.stepanew.exam.questionnaire.store.entities.UserEntity;
+import com.stepanew.exam.questionnaire.store.repositories.QuestionRepository;
 import com.stepanew.exam.questionnaire.store.repositories.QuestionnaireRepository;
 import com.stepanew.exam.questionnaire.store.repositories.QuestionnaireStatusRepository;
 import com.stepanew.exam.questionnaire.store.repositories.UserRepository;
@@ -23,8 +26,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.security.Principal;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 
 import static com.stepanew.exam.questionnaire.exception.ResourceNotFoundException.resourceNotFoundExceptionSupplier;
 
@@ -38,6 +42,8 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
     final UserRepository userRepository;
 
     final QuestionnaireStatusRepository questionnaireStatusRepository;
+
+    final QuestionRepository questionRepository;
 
 
     @Override
@@ -143,7 +149,7 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
                 .isPresent();
 
         if(isStarted){
-            throw new QuestionnaireWasStartedException(
+            throw new QuestionnaireBadRequestException(
                     "User with id = %d already have started questionnaire with id = %d",
                     user.getId(),
                     questionnaire.getId()
@@ -163,12 +169,80 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
     }
 
     @Override
-    public QuestionnaireAnsweredResponseDto answerQuestionnaire(AnswerListRequestDto answerRequestDto, Principal principal) {
-        return null;
+    public QuestionnaireAnsweredResponseDto answerQuestionnaire(AnswerListRequestDto answerListRequestDto, String username) {
+        UserEntity user = getUser(username);
+        QuestionnaireEntity questionnaire = getQuestionnaire(answerListRequestDto.getQuestionnaireId());
+        QuestionnaireAnsweredResponseDto response;
+
+        Optional<QuestionnaireStatusEntity> questionnaireStatusOptional = questionnaireStatusRepository
+                .findByUser_IdAndQuestionnaireId(user.getId(), questionnaire.getId());
+
+        if(questionnaireStatusOptional.isPresent()){
+            int correctAnswers = 0;
+            int incorrectAnswers = 0;
+
+            QuestionnaireStatusEntity questionnaireStatus = questionnaireStatusOptional.get();
+            if(questionnaireStatus.getStatus().equals(Status.DONE)){
+                throw new QuestionnaireBadRequestException("Questionnaire with id = %s is done", questionnaire.getId());
+            }
+
+            List<AnswerRequestDto> answersList = answerListRequestDto
+                    .getAnswers()
+                    .stream()
+                    .filter(answer -> checkAnswer(answer, questionnaire.getId()))
+                    .toList();
+
+            if(answersList.size() > questionnaire.getQuestions().size()){
+                throw new QuestionnaireBadRequestException("Too much answers");
+            }
+
+            for (AnswerRequestDto answer: answersList){
+                switch (answer.getAnswer().toUpperCase()){
+                    case "NO" -> incorrectAnswers++;
+                    case "YES" -> correctAnswers++;
+                }
+            }
+
+            response = QuestionnaireAnsweredResponseDto
+                    .builder()
+                    .userId(user.getId())
+                    .questionnaireId(questionnaire.getId())
+                    .correctAnswers(correctAnswers)
+                    .status(Status.IN_PROCESS)
+                    .incorrectAnswers(incorrectAnswers)
+                    .build();
+
+            questionnaireStatus.setCorrectAnswers(correctAnswers);
+            questionnaireStatus.setIncorrectAnswers(incorrectAnswers);
+
+            if (correctAnswers + incorrectAnswers == questionnaire.getQuestions().size()){
+                questionnaireStatus.setStatus(Status.DONE);
+                response.setStatus(Status.DONE);
+            }
+
+            questionnaireStatusRepository.save(questionnaireStatus);
+        } else{
+            throw new ResourceNotFoundException("User with id = %d did not start questionnaire with id = %d",
+                    user.getId(),
+                    questionnaire.getId());
+        }
+
+        return response;
     }
 
     private boolean isExistById(Long id) {
         return userRepository.existsById(id);
+    }
+
+    private boolean checkAnswer(AnswerRequestDto answer, Long questionnaireId){
+        if(!(answer.getAnswer().toUpperCase().equals(Answer.NO.getMessage())
+                || answer.getAnswer().toUpperCase().equals(Answer.YES.getMessage()))){
+            throw new QuestionnaireBadRequestException("Incorrect answer - %s (yes/no)", answer.getAnswer());
+        }
+        if (!questionRepository.isQuestionnaireQuestion(questionnaireId, answer.getQuestionId())) {
+            throw new QuestionnaireBadRequestException("Question with id = %d is not exists", answer.getQuestionId());
+        }
+        return true;
     }
 
     private QuestionnaireEntity getQuestionnaire(Long id) {
