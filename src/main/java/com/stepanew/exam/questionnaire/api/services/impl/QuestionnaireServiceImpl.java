@@ -7,6 +7,7 @@ import com.stepanew.exam.questionnaire.api.DTOs.Request.QuestionnaireCreateReque
 import com.stepanew.exam.questionnaire.api.DTOs.Request.QuestionnaireUpdateRequestDto;
 import com.stepanew.exam.questionnaire.api.DTOs.Response.QuestionnaireAnsweredResponseDto;
 import com.stepanew.exam.questionnaire.api.DTOs.Response.QuestionnaireStartedResponseDto;
+import com.stepanew.exam.questionnaire.api.DTOs.Response.StatisticResponseDto;
 import com.stepanew.exam.questionnaire.api.enums.Answer;
 import com.stepanew.exam.questionnaire.api.enums.Status;
 import com.stepanew.exam.questionnaire.api.services.QuestionnaireService;
@@ -222,6 +223,41 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
 
             questionnaireStatusRepository.save(questionnaireStatus);
         } else{
+            throw new ResourceNotFoundException("User with id = %d did not start questionnaire with id = %d",
+                    user.getId(),
+                    questionnaire.getId());
+        }
+
+        return response;
+    }
+
+    @Override
+    public StatisticResponseDto getStatistic(Long id, String username) {
+        UserEntity user = getUser(username);
+        QuestionnaireEntity questionnaire = getQuestionnaire(id);
+        StatisticResponseDto response;
+
+        Optional<QuestionnaireStatusEntity> questionnaireStatusOptional = questionnaireStatusRepository
+                .findByUser_IdAndQuestionnaireId(user.getId(), questionnaire.getId());
+
+        if(questionnaireStatusOptional.isPresent()){
+            QuestionnaireStatusEntity questionnaireStatus = questionnaireStatusOptional.get();
+            if(!questionnaireStatus.getStatus().equals(Status.DONE)){
+                throw new QuestionnaireBadRequestException(
+                        "Questionnaire with id = %d is not done by user with id = %d",
+                        id,
+                        user.getId()
+                );
+            }
+
+            response = StatisticResponseDto.builder()
+                    .userId(user.getId())
+                    .questionnaireId(id)
+                    .correctAnswers(questionnaireStatus.getCorrectAnswers())
+                    .incorrectAnswers(questionnaireStatus.getIncorrectAnswers())
+                    .build();
+
+        } else {
             throw new ResourceNotFoundException("User with id = %d did not start questionnaire with id = %d",
                     user.getId(),
                     questionnaire.getId());

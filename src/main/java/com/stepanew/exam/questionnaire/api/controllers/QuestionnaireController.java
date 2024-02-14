@@ -6,6 +6,7 @@ import com.stepanew.exam.questionnaire.api.DTOs.Request.QuestionnaireCreateReque
 import com.stepanew.exam.questionnaire.api.DTOs.Request.QuestionnaireUpdateRequestDto;
 import com.stepanew.exam.questionnaire.api.DTOs.Response.QuestionnaireAnsweredResponseDto;
 import com.stepanew.exam.questionnaire.api.DTOs.Response.QuestionnaireStartedResponseDto;
+import com.stepanew.exam.questionnaire.api.DTOs.Response.StatisticResponseDto;
 import com.stepanew.exam.questionnaire.api.services.QuestionnaireService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -138,6 +139,16 @@ public class QuestionnaireController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(response);
+    }
+
+    @GetMapping("/{id}/statistics")
+    @PreAuthorize(value = "hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
+    public ResponseEntity<StatisticResponseDto> getStatistic(@PathVariable Long id, Principal principal){
+        StatisticResponseDto response = questionnaireService.getStatistic(id, principal.getName());
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(response);
+
     }
 
 }
