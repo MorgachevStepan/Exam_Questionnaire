@@ -145,16 +145,20 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
         UserEntity user = getUser(username);
         QuestionnaireEntity questionnaire = getQuestionnaire(questionnaireId);
 
-        boolean isStarted = questionnaireStatusRepository
-                .findByUser_IdAndQuestionnaireId(user.getId(), questionnaire.getId())
-                .isPresent();
+        Optional<QuestionnaireStatusEntity> questionnaireStatusEntityOptional = questionnaireStatusRepository
+                .findByUser_IdAndQuestionnaireId(user.getId(), questionnaire.getId());
 
-        if(isStarted){
-            throw new QuestionnaireBadRequestException(
-                    "User with id = %d already have started questionnaire with id = %d",
-                    user.getId(),
-                    questionnaire.getId()
-            );
+        if(questionnaireStatusEntityOptional.isPresent()){
+            QuestionnaireStatusEntity questionnaireStatus = questionnaireStatusEntityOptional.get();
+            if(questionnaireStatus.getStatus().equals(Status.IN_PROCESS)) {
+                throw new QuestionnaireBadRequestException(
+                        "User with id = %d already have started questionnaire with id = %d",
+                        user.getId(),
+                        questionnaire.getId()
+                );
+            } else{
+                questionnaireStatusRepository.delete(questionnaireStatus);
+            }
         }
 
         QuestionnaireStatusEntity questionnaireStatus = QuestionnaireStatusEntity
