@@ -24,8 +24,10 @@ public class AuthController {
     final UserService userService;
 
     @PostMapping("/login")
-    public JwtResponse login(@RequestBody @Validated JwtRequest loginRequest){
-        return authService.login(loginRequest);
+    public ResponseEntity<JwtResponse> login(@RequestBody @Validated JwtRequest loginRequest){
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(authService.login(loginRequest));
     }
 
     @PostMapping("/register")
@@ -37,8 +39,10 @@ public class AuthController {
     }
 
     @PostMapping("/refresh")
-    public JwtResponse refresh(@RequestBody String refreshToken){
-        return authService.refresh(refreshToken);
+    public ResponseEntity<JwtResponse> refresh(@RequestBody String refreshToken){
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(authService.refresh(refreshToken));
     }
 
 }
