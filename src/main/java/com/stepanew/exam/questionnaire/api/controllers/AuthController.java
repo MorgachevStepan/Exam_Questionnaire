@@ -4,6 +4,7 @@ import com.stepanew.exam.questionnaire.api.DTOs.Dto.UserDto;
 import com.stepanew.exam.questionnaire.api.DTOs.Request.UserRegisterRequestDto;
 import com.stepanew.exam.questionnaire.api.DTOs.auth.JwtRequest;
 import com.stepanew.exam.questionnaire.api.DTOs.auth.JwtResponse;
+import com.stepanew.exam.questionnaire.api.controllers.api.AuthApi;
 import com.stepanew.exam.questionnaire.api.services.AuthService;
 import com.stepanew.exam.questionnaire.api.services.UserService;
 import lombok.RequiredArgsConstructor;
@@ -31,11 +32,10 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<UserDto> register(@RequestBody @Validated UserRegisterRequestDto requestDto){
-        UserDto response = userService.create(requestDto);
+    public ResponseEntity<JwtResponse> register(@RequestBody @Validated UserRegisterRequestDto requestDto){
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(response);
+                .body(authService.register(requestDto));
     }
 
     @PostMapping("/refresh")
