@@ -1,9 +1,9 @@
 package com.stepanew.exam.questionnaire.api.controllers;
 
-import com.stepanew.exam.questionnaire.api.DTOs.Dto.UserDto;
 import com.stepanew.exam.questionnaire.api.DTOs.Request.UserRegisterRequestDto;
 import com.stepanew.exam.questionnaire.api.DTOs.auth.JwtRequest;
 import com.stepanew.exam.questionnaire.api.DTOs.auth.JwtResponse;
+import com.stepanew.exam.questionnaire.api.DTOs.auth.RefreshJwtRequest;
 import com.stepanew.exam.questionnaire.api.controllers.api.AuthApi;
 import com.stepanew.exam.questionnaire.api.services.AuthService;
 import com.stepanew.exam.questionnaire.api.services.UserService;
@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
-public class AuthController {
+public class AuthController implements AuthApi {
 
     final AuthService authService;
     final UserService userService;
@@ -39,7 +39,7 @@ public class AuthController {
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<JwtResponse> refresh(@RequestBody String refreshToken){
+    public ResponseEntity<JwtResponse> refresh(@RequestBody RefreshJwtRequest refreshToken){
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(authService.refresh(refreshToken));
