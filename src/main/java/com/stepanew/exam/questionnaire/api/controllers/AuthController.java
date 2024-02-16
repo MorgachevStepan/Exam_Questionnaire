@@ -1,9 +1,10 @@
 package com.stepanew.exam.questionnaire.api.controllers;
 
-import com.stepanew.exam.questionnaire.api.DTOs.Dto.UserDto;
 import com.stepanew.exam.questionnaire.api.DTOs.Request.UserRegisterRequestDto;
 import com.stepanew.exam.questionnaire.api.DTOs.auth.JwtRequest;
 import com.stepanew.exam.questionnaire.api.DTOs.auth.JwtResponse;
+import com.stepanew.exam.questionnaire.api.DTOs.auth.RefreshJwtRequest;
+import com.stepanew.exam.questionnaire.api.controllers.api.AuthApi;
 import com.stepanew.exam.questionnaire.api.services.AuthService;
 import com.stepanew.exam.questionnaire.api.services.UserService;
 import lombok.RequiredArgsConstructor;
@@ -18,27 +19,30 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
-public class AuthController {
+public class AuthController implements AuthApi {
 
     final AuthService authService;
     final UserService userService;
 
     @PostMapping("/login")
-    public JwtResponse login(@RequestBody @Validated JwtRequest loginRequest){
-        return authService.login(loginRequest);
+    public ResponseEntity<JwtResponse> login(@RequestBody @Validated JwtRequest loginRequest){
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(authService.login(loginRequest));
     }
 
     @PostMapping("/register")
-    public ResponseEntity<UserDto> register(@RequestBody @Validated UserRegisterRequestDto requestDto){
-        UserDto response = userService.create(requestDto);
+    public ResponseEntity<JwtResponse> register(@RequestBody @Validated UserRegisterRequestDto requestDto){
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(response);
+                .body(authService.register(requestDto));
     }
 
     @PostMapping("/refresh")
-    public JwtResponse refresh(@RequestBody String refreshToken){
-        return authService.refresh(refreshToken);
+    public ResponseEntity<JwtResponse> refresh(@RequestBody RefreshJwtRequest refreshToken){
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(authService.refresh(refreshToken));
     }
 
 }
