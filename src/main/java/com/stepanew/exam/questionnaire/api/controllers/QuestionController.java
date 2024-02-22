@@ -3,6 +3,7 @@ package com.stepanew.exam.questionnaire.api.controllers;
 import com.stepanew.exam.questionnaire.api.DTOs.Dto.QuestionDto;
 import com.stepanew.exam.questionnaire.api.DTOs.Request.QuestionCreateRequestDto;
 import com.stepanew.exam.questionnaire.api.DTOs.Request.QuestionUpdateRequestDto;
+import com.stepanew.exam.questionnaire.api.controllers.api.QuestionApi;
 import com.stepanew.exam.questionnaire.api.services.QuestionService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +22,7 @@ import java.net.URI;
 @RequestMapping("/api/v1/questions")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class QuestionController {
+public class QuestionController implements QuestionApi {
 
     final QuestionService questionService;
 
