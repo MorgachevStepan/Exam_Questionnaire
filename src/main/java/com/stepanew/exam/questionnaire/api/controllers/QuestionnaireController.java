@@ -7,6 +7,7 @@ import com.stepanew.exam.questionnaire.api.DTOs.Request.QuestionnaireUpdateReque
 import com.stepanew.exam.questionnaire.api.DTOs.Response.QuestionnaireAnsweredResponseDto;
 import com.stepanew.exam.questionnaire.api.DTOs.Response.QuestionnaireStartedResponseDto;
 import com.stepanew.exam.questionnaire.api.DTOs.Response.StatisticResponseDto;
+import com.stepanew.exam.questionnaire.api.controllers.api.QuestionnaireApi;
 import com.stepanew.exam.questionnaire.api.services.QuestionnaireService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +29,7 @@ import java.time.LocalDateTime;
 @RequestMapping("/api/v1/questionnaires")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class QuestionnaireController {
+public class QuestionnaireController implements QuestionnaireApi {
 
     final QuestionnaireService questionnaireService;
 
