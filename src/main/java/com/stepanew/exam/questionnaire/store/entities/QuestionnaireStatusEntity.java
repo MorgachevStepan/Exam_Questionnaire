@@ -43,6 +43,21 @@ public class QuestionnaireStatusEntity {
     @ElementCollection
     @CollectionTable(name = "answer_questions", joinColumns = @JoinColumn(name = "answer_questions"))
     @Column(name = "questions")
-    Set<Integer> answers;
+    Set<Long> answers;
 
+    public void incrementCorrectAnswers(int correctAnswers) {
+        if (this.correctAnswers == null) {
+            this.correctAnswers = correctAnswers;
+        } else {
+            this.correctAnswers += correctAnswers;
+        }
+    }
+
+    public void incrementIncorrectAnswers(int incorrectAnswers) {
+        if (this.incorrectAnswers == null) {
+            this.incorrectAnswers = incorrectAnswers;
+        } else {
+            this.incorrectAnswers += incorrectAnswers;
+        }
+    }
 }

@@ -28,8 +28,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static com.stepanew.exam.questionnaire.exception.ResourceNotFoundException.resourceNotFoundExceptionSupplier;
 
@@ -197,8 +199,16 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
                     .filter(answer -> checkAnswer(answer, questionnaire.getId()))
                     .toList();
 
+            Set<Long> tempAnswers = new HashSet<>(questionnaireStatus.getAnswers());
+            answersList.forEach(answer -> questionnaireStatus.getAnswers().add(answer.getQuestionId()));
+
             if(answersList.size() > questionnaire.getQuestions().size()){
                 throw new QuestionnaireBadRequestException("Too much answers");
+            }
+
+            if(questionnaireStatus.getAnswers().size() < answersList.size() + tempAnswers.size()) {
+                questionnaireStatus.setAnswers(tempAnswers);
+                throw new QuestionnaireBadRequestException("Each question can only be answered once");
             }
 
             for (AnswerRequestDto answer: answersList){
@@ -208,19 +218,21 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
                 }
             }
 
+            questionnaireStatus.incrementCorrectAnswers(correctAnswers);
+            questionnaireStatus.incrementIncorrectAnswers(incorrectAnswers);
+
             response = QuestionnaireAnsweredResponseDto
                     .builder()
                     .userId(user.getId())
                     .questionnaireId(questionnaire.getId())
-                    .correctAnswers(correctAnswers)
+                    .correctAnswers(questionnaireStatus.getCorrectAnswers())
                     .status(Status.IN_PROCESS)
-                    .incorrectAnswers(incorrectAnswers)
+                    .incorrectAnswers(questionnaireStatus.getIncorrectAnswers())
                     .build();
 
-            questionnaireStatus.setCorrectAnswers(correctAnswers);
-            questionnaireStatus.setIncorrectAnswers(incorrectAnswers);
-
-            if (correctAnswers + incorrectAnswers == questionnaire.getQuestions().size()){
+            if (questionnaireStatus.getCorrectAnswers() +
+                    questionnaireStatus.getIncorrectAnswers() ==
+                    questionnaire.getQuestions().size()){
                 questionnaireStatus.setStatus(Status.DONE);
                 response.setStatus(Status.DONE);
             }
