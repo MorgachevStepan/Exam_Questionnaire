@@ -248,7 +248,7 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
             QuestionnaireStatusEntity questionnaireStatus = questionnaireStatusOptional.get();
             if(!questionnaireStatus.getStatus().equals(Status.DONE)){
                 throw new QuestionnaireBadRequestException(
-                        "Questionnaire with id = %d is not done by user with id = %d",
+                        "Questionnaire with id = %d is in process by user with id = %d",
                         id,
                         user.getId()
                 );

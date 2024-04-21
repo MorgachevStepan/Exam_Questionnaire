@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.Set;
+
 @Getter
 @Setter
 @Builder
@@ -37,5 +39,10 @@ public class QuestionnaireStatusEntity {
 
     @Column(name = "incorrect_answers")
     Integer incorrectAnswers;
+
+    @ElementCollection
+    @CollectionTable(name = "answer_questions", joinColumns = @JoinColumn(name = "answer_questions"))
+    @Column(name = "questions")
+    Set<Integer> answers;
 
 }
