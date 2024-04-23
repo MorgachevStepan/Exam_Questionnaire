@@ -21,13 +21,13 @@ public class ControllerAdvice {
 
     @ExceptionHandler(ResourceNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ExceptionBody handleResourceNotFound(ResourceNotFoundException e){
+    public ExceptionBody handleResourceNotFound(ResourceNotFoundException e) {
         return new ExceptionBody(e.getMessage());
     }
 
     @ExceptionHandler({MethodArgumentNotValidException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ExceptionBody handleMethodArgumentNotValid(MethodArgumentNotValidException e){
+    public ExceptionBody handleMethodArgumentNotValid(MethodArgumentNotValidException e) {
         ExceptionBody exceptionBody = new ExceptionBody("Validation failed");
         List<FieldError> errors = e.getBindingResult().getFieldErrors();
         exceptionBody.setErrors(errors.stream()
@@ -37,13 +37,19 @@ public class ControllerAdvice {
 
     @ExceptionHandler(QuestionnaireBadRequestException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ExceptionBody handleQuestionnaireWasStartedException(QuestionnaireBadRequestException e){
+    public ExceptionBody handleQuestionnaireWasStartedException(QuestionnaireBadRequestException e) {
+        return new ExceptionBody(e.getMessage());
+    }
+
+    @ExceptionHandler(UserBadRequestException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ExceptionBody handleUserBadRequestException(UserBadRequestException e) {
         return new ExceptionBody(e.getMessage());
     }
 
     @ExceptionHandler(InvalidFormatException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ExceptionBody handleResourceNotFound(InvalidFormatException e){
+    public ExceptionBody handleResourceNotFound(InvalidFormatException e) {
         ExceptionBody exceptionBody = new ExceptionBody("Validation failed");
         Map<String, String> errors = new HashMap<>();
         errors.put(e.getPath().get(0).getFieldName(), "Invalid value for this field");
@@ -53,32 +59,32 @@ public class ControllerAdvice {
 
     @ExceptionHandler(AuthenticationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ExceptionBody handleAuthentication(){
+    public ExceptionBody handleAuthentication() {
         return new ExceptionBody("Authentication failed");
     }
 
     @ExceptionHandler({AccessDeniedException.class, org.springframework.security.access.AccessDeniedException.class})
     @ResponseStatus(HttpStatus.FORBIDDEN)
-    public ExceptionBody handleAccessDenied(){
+    public ExceptionBody handleAccessDenied() {
         return new ExceptionBody("Access denied");
     }
 
     @ExceptionHandler(IllegalStateException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ExceptionBody handleIllegalState(IllegalStateException e){
+    public ExceptionBody handleIllegalState(IllegalStateException e) {
         return new ExceptionBody(e.getMessage());
     }
 
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ExceptionBody handleException(){
+    public ExceptionBody handleException() {
         return new ExceptionBody("Internal error");
     }
 
 
     @ExceptionHandler({ExpiredJwtException.class})
     @ResponseStatus(HttpStatus.FORBIDDEN)
-    public ExceptionBody handleExpiredJwtException(){
+    public ExceptionBody handleExpiredJwtException() {
         return new ExceptionBody("Token has expired");
     }
 

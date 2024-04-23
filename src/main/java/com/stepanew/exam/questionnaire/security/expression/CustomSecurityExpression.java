@@ -14,6 +14,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
 import java.util.Optional;
 
 @Service("customSecurityExpression")
@@ -25,10 +26,22 @@ public class CustomSecurityExpression {
     final QuestionRepository questionRepository;
     final QuestionnaireStatusRepository questionnaireStatusRepository;
 
-    public boolean canAccessUserToQuestion(Long questionId){
+    public boolean canAccessUserToQuestion(Long questionId) {
         Long userId = getAuthenticationId();
 
         return questionRepository.isUsersQuestion(userId, questionId);
+    }
+
+    public boolean canAccessUserToUser(String username) {
+        String checkingUsername = getAuthenticationUsername();
+
+        return Objects.equals(username, checkingUsername) || hasAnyRole("ROLE_ADMIN");
+    }
+
+    public boolean canAccessUserToUser(Long userId) {
+        Long checkingUserId = getAuthenticationId();
+
+        return Objects.equals(userId, checkingUserId) || hasAnyRole("ROLE_ADMIN");
     }
 
     public boolean canAccessUserToQuestionnaire(Long questionnaireId) {
@@ -38,21 +51,21 @@ public class CustomSecurityExpression {
                 || hasAnyRole("ROLE_ADMIN");
     }
 
-    public boolean canAccessUserToStartedQuestionnaire(Long questionnaireId){
+    public boolean canAccessUserToStartedQuestionnaire(Long questionnaireId) {
         boolean canAccess = false;
         Long userId = getAuthenticationId();
 
         Optional<QuestionnaireStatusEntity> questionnaireStatus = questionnaireStatusRepository
                 .findByUser_IdAndQuestionnaireId(userId, questionnaireId);
 
-        if(questionnaireStatus.isPresent()){
+        if (questionnaireStatus.isPresent()) {
             canAccess = questionnaireStatus.get().getStatus().equals(Status.IN_PROCESS);
         }
 
         return canAccess || canAccessUserToQuestionnaire(questionnaireId);
     }
 
-    public boolean canAccessUser(Long userId){
+    public boolean canAccessUser(Long userId) {
         Long currentUserId = getAuthenticationId();
 
         System.out.println(userId);
@@ -60,7 +73,7 @@ public class CustomSecurityExpression {
         return userId.equals(currentUserId) || hasAnyRole("ROLE_ADMIN");
     }
 
-    private Long getAuthenticationId(){
+    private Long getAuthenticationId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         JwtEntity user = (JwtEntity) authentication.getPrincipal();
@@ -68,12 +81,20 @@ public class CustomSecurityExpression {
         return user.getId();
     }
 
-    private boolean hasAnyRole(String... roles){
+    private String getAuthenticationUsername() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        for(String role: roles){
+        JwtEntity user = (JwtEntity) authentication.getPrincipal();
+
+        return user.getUsername();
+    }
+
+    private boolean hasAnyRole(String... roles) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        for (String role : roles) {
             SimpleGrantedAuthority authority = new SimpleGrantedAuthority(role);
-            if(authentication.getAuthorities().contains(authority)){
+            if (authentication.getAuthorities().contains(authority)) {
                 return true;
             }
         }
