@@ -38,6 +38,12 @@ public class CustomSecurityExpression {
         return Objects.equals(username, checkingUsername) || hasAnyRole("ROLE_ADMIN");
     }
 
+    public boolean canAccessUserToUser(Long userId) {
+        Long checkingUserId = getAuthenticationId();
+
+        return Objects.equals(userId, checkingUserId) || hasAnyRole("ROLE_ADMIN");
+    }
+
     public boolean canAccessUserToQuestionnaire(Long questionnaireId) {
         Long userId = getAuthenticationId();
 

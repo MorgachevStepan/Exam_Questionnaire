@@ -99,8 +99,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void delete(Long id) {
-
+    public void delete(Long userId) {
+        UserEntity deletedUser = userRepository
+                .findById(userId)
+                .orElseThrow(
+                        resourceNotFoundExceptionSupplier(
+                                "User with id = %d is not exist", userId
+                        )
+                );
+        userRepository.delete(deletedUser);
     }
 
     @Override

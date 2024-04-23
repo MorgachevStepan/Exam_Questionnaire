@@ -125,4 +125,41 @@ public interface UserApi {
     ResponseEntity<UserDto> updateUser(
             @RequestBody @Validated UserUpdateRequestDto requestDto);
 
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "204",
+                    description = "Пользователь был успешно удален",
+                    content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = ResponseEntity.class)
+                            )
+                    }
+            ),
+            @ApiResponse(
+                    responseCode = "403",
+                    description = "Отказано в доступе",
+                    content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = ExceptionBody.class)
+                            )
+                    }),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Пользователь по переданному id не был найден",
+                    content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = ExceptionBody.class)
+                            )
+                    }
+            )
+    })
+    @Operation(summary = "Удаление пользователя")
+    ResponseEntity<Void> deleteQuestion(
+            @Parameter(description = "Id пользователя", example = "1")
+            Long id
+    );
+
 }

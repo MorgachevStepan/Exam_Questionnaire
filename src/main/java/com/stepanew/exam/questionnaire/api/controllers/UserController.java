@@ -64,4 +64,13 @@ public class UserController implements UserApi {
                 .body(response);
     }
 
+    @DeleteMapping("/{id}")
+    @PreAuthorize("@customSecurityExpression.canAccessUserToUser(#id)")
+    public ResponseEntity<Void> deleteQuestion(@PathVariable Long id){
+        userService.delete(id);
+        return ResponseEntity
+                .status(HttpStatus.NO_CONTENT)
+                .build();
+    }
+
 }
